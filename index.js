@@ -1,84 +1,33 @@
+require('dotenv').config();
 const express = require("express");
-const server = express();
+const cors = require("cors");
+const { destinationRoutes } = require("./routes/destination.routes");
+const { messageRoutes } = require('./routes/message.routes');
+const app = express();
 const PORT = process.env.PORT || 3000;
 const IP = '0.0.0.0';
-server.use(express.urlencoded({ extended: true }));
-server.use(express.json());
 
-const dataDestinatios = [
-    {
-        "id": "1",
-        "city": "Roma",
-        "country": "Italy"
-    },
-    {
-        "id": "2",
-        "city": "Tokyo",
-        "country": "Jepang"
-    },
-    {
-        "id": "3",
-        "city": "Sydney",
-        "country": "Australia"
-    },
-    {
-        "id": "4",
-        "city": "New York",
-        "country": "Amerika Serikat"
-    },
-    {
-        "id": "5",
-        "city": "Bali",
-        "country": "Indnesia"
-    },
-    {
-        "id": "6",
-        "city": "Reykjavik",
-        "country": "Islandia"
-    },
-]
+app.use(cors());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
-server.get("/", function (request, response) {
-    response.send("Home");
+app.get("/", async (req, res) => {
+    res.send("ready to respond !");
 });
 
-server.get("/destination/:city", function (request, response) {
-    response.status(200).json({
-        success: true,
-        message: "retrieve data sucessful",
-        data: {
-            "id": "1",
-            "title": "roma",
-            "description": "roma is beautiful city",
-            "image": "roma.png"
+// destination routes
+app.use("/destinations",destinationRoutes);
 
-        }
-    })
+// message routes
+app.use("/messages", messageRoutes);
+
+app.all("*", async (req, res) => {
+    res.json({
+        message: "Routes You're looking is not found",
+    });
 });
 
-server.get("/contact", function (request, response) {
-    response.send("Contact");
-});
-
-server.post("/contact", (req, res) => {
-    console.log(req.body);
-    const { name, email, message } = req.body;
-    response.status(200).json({
-        success: true,
-        message: " data sucessful",
-        data: {
-            "name": name,
-            "email" : email,
-            "message" : message,
-
-        }
-    })
-    
-
-})
-
-
-server.listen(PORT,IP, () => {
+app.listen(PORT, IP, () => {
     console.log(
         `You are running on port url: http://localhost:${PORT}`
     );
