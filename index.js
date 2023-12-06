@@ -16,11 +16,12 @@ app.get("/", async (req, res) => {
 });
 
 // destination routes
-app.use("/destinations",destinationRoutes);
+app.use("/destinations", destinationRoutes);
 
 // message routes
 app.use("/messages", messageRoutes);
 
+//Rote that does not exist will display this
 app.all("*", async (req, res) => {
     res.json({
         message: "Routes You're looking is not found",
